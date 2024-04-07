@@ -23,7 +23,7 @@ const Home = () => {
               <GameNav navpath="/">BUTC Hack - Fallout</GameNav>
               <GameNav navpath="/">Vehicle Chop - Typing</GameNav>
               <GameNav navpath="/">Heist Pinger</GameNav>
-              <GameNav navpath="/">Word memory</GameNav>
+              <GameNav navpath="/word-memory-4-0">Word memory</GameNav>
               <GameNav navpath="/">Maze Bank - Thermal Fuse</GameNav>
               <GameNav navpath="/">Maze Bank - Terminal</GameNav>
             </CardContent>
