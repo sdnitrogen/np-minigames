@@ -1,6 +1,6 @@
-import Description from "@/components/description"
-import GameNav from "@/components/game-nav"
-import Header from "@/components/header"
+import Description from "@/components/Description"
+import GameNav from "@/components/Gamenav"
+import Header from "@/components/Header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { mainDescription } from "@/constants"
 
