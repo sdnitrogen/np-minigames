@@ -133,13 +133,13 @@ const WordMemory = () => {
         )}
         <div className="flex flex-row gap-1 w-[32rem]">
           <Button
-            className="flex-1 bg-green-700 hover:bg-green-900 text-primary font-bold"
+            className="flex-1 bg-green-600 hover:bg-green-900 text-white font-bold"
             disabled={word === ""}
             onClick={handleSeen}>
             Seen
           </Button>
           <Button
-            className="flex-1 bg-purple-700 hover:bg-purple-900 text-primary font-bold"
+            className="flex-1 bg-purple-600 hover:bg-purple-900 text-white font-bold"
             disabled={word === ""}
             onClick={handleUnseen}>
             Unseen
