@@ -21,7 +21,9 @@ const Home = () => {
             <ScrollArea className="w-full h-[32rem]">
               <div className="flex flex-col px-4 pb-4">
                 <GameNav navpath="/">Lockpick</GameNav>
-                <GameNav navpath="/">Roof Running - Same Game</GameNav>
+                <GameNav navpath="/same-game-4-0" done>
+                  Same Game - Roof Running
+                </GameNav>
                 <GameNav navpath="/">Smoke Crack - Typing</GameNav>
                 <GameNav navpath="/">Repair Kit / HandCuff</GameNav>
                 <GameNav navpath="/">BUTC Hack - Fallout</GameNav>

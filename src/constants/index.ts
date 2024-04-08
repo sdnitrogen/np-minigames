@@ -2,6 +2,8 @@ export const mainDescription = `Collection of No-Pixel GTA V RP server's minigam
 
 export const wordMemoryDescription = `Click Seen / Unseen buttons for the english words that show up on screen.\nEach correct click = +1 score. Wrong click = fail. Try to reach the target score within time.`
 
+export const sameGameDescription = `Click on same-colored grouped boxes (vertically & horizontally) to make them disappear.\nBoxes fall down and left. Clear the board to win.`
+
 export const wordList = [
   "aardvark",
   "aardvarks",
