@@ -11,31 +11,52 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { wordList, wordMemoryDescription } from "@/constants"
-import { getRandomWord } from "@/lib/utils"
-import { useState } from "react"
+import { Progress } from "@/components/ui/progress"
+import { Skeleton } from "@/components/ui/skeleton"
+import { wordMemoryDescription } from "@/constants"
+import { getRandomWord, getRandomWordsList } from "@/lib/utils"
+import { useEffect, useState } from "react"
 
 const WordMemory = () => {
-  const getRandomWordsList = () => {
-    const resWordList = wordList.sort(() => 0.5 - Math.random()).slice(0, 25)
-    return resWordList
-  }
-
+  const fullTime = 20
   const [word, setWord] = useState("")
   const [list, setList] = useState<string[]>([])
   const [tracker, setTracker] = useState<string[]>([])
   const [score, setScore] = useState(0)
   const [result, setResult] = useState("")
   const [open, setOpen] = useState(false)
+  const [progress, setProgress] = useState(100)
+  const [timeLeft, setTimeLeft] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (timeLeft > 0 && result === "") {
+      const reducedTime = timeLeft - 0.1
+      setTimeout(() => {
+        setTimeLeft(reducedTime)
+        setProgress((reducedTime / fullTime) * 100)
+      }, 100)
+    } else if (progress <= 0 && result === "") {
+      setOpen(true)
+      setResult("F A I L E D !")
+    }
+  }, [timeLeft])
 
   const startGame = () => {
-    setScore(0)
-    setTracker([])
-    setResult("")
-    setOpen(false)
-    const randomWordList = getRandomWordsList()
-    setList(randomWordList)
-    setWord(getRandomWord(randomWordList))
+    setLoading(true)
+    setResult("Init")
+    setTimeout(() => {
+      setScore(0)
+      setTracker([])
+      setResult("")
+      setOpen(false)
+      const randomWordList = getRandomWordsList()
+      setList(randomWordList)
+      setWord(getRandomWord(randomWordList))
+      setTimeLeft(fullTime)
+      setProgress(100)
+      setLoading(false)
+    }, 3000)
   }
 
   const handleSeen = () => {
@@ -76,6 +97,7 @@ const WordMemory = () => {
     setResult("")
     setOpen(false)
     setWord("")
+    setProgress(100)
   }
 
   return (
@@ -95,13 +117,20 @@ const WordMemory = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Header title="NoPixel Minigames Library" />
+      <Header title="Word Memory" />
       <Description desc={wordMemoryDescription} />
       <section className="flex flex-1 flex-col items-center justify-center gap-2 w-full rounded-lg border-2 p-2">
         <div className="mt-auto">{score} / 25</div>
-        <div className="flex items-center justify-center p-4 bg-muted rounded-lg w-[32rem] h-[12rem] text-primary text-5xl font-bold">
-          {word}
-        </div>
+        {loading && <Skeleton className="rounded-lg w-[32rem] h-[12rem]" />}
+        {!loading && (
+          <div className="flex flex-col items-center justify-center bg-muted rounded-lg w-[32rem] h-[12rem] text-primary text-5xl font-bold">
+            <span className="mt-auto">{word}</span>
+            <Progress
+              value={progress}
+              className="w-full mt-auto rounded-none"
+            />
+          </div>
+        )}
         <div className="flex flex-row gap-1 w-[32rem]">
           <Button
             className="flex-1 bg-green-700 hover:bg-green-900 text-primary font-bold"

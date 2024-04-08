@@ -5,14 +5,18 @@ import { buttonVariants } from "../ui/button"
 
 type GameNavProps = {
   navpath: string
+  done?: boolean
   children: React.ReactNode
 }
 
-const GameNav: FC<GameNavProps> = ({ navpath, children }) => {
+const GameNav: FC<GameNavProps> = ({ navpath, children, done }) => {
   return (
     <Link
       href={navpath}
-      className={cn(buttonVariants({ variant: "ghost" }), "justify-start")}>
+      className={cn(
+        buttonVariants({ variant: "ghost" }),
+        `justify-between border-b-2 ${done && "border-green-400"}`
+      )}>
       {children}
     </Link>
   )

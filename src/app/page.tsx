@@ -12,8 +12,10 @@ const Home = () => {
       <section className="flex w-full h-auto flex-row items-center justify-center gap-8 p-4">
         <div className="w-min h-min p-1 rounded-lg bg-muted-foreground">
           <Card className="w-[22rem] h-[30rem] overflow-clip pb-4">
-            <CardHeader>
-              <CardTitle className="px-2 text-green-300">4.0</CardTitle>
+            <CardHeader className="px-6 py-4">
+              <CardTitle className="p-2 w-max rounded-sm bg-blue-600">
+                4.0
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col h-full scroll-auto overflow-scroll">
               <GameNav navpath="/">Lockpick</GameNav>
@@ -23,7 +25,9 @@ const Home = () => {
               <GameNav navpath="/">BUTC Hack - Fallout</GameNav>
               <GameNav navpath="/">Vehicle Chop - Typing</GameNav>
               <GameNav navpath="/">Heist Pinger</GameNav>
-              <GameNav navpath="/word-memory-4-0">Word memory</GameNav>
+              <GameNav navpath="/word-memory-4-0" done>
+                Word Memory
+              </GameNav>
               <GameNav navpath="/">Maze Bank - Thermal Fuse</GameNav>
               <GameNav navpath="/">Maze Bank - Terminal</GameNav>
             </CardContent>
@@ -31,8 +35,10 @@ const Home = () => {
         </div>
         <div className="w-min h-min p-1 rounded-lg bg-muted-foreground">
           <Card className="w-[22rem] h-[30rem] overflow-clip pb-4">
-            <CardHeader>
-              <CardTitle className="px-2 text-yellow-300">3.0</CardTitle>
+            <CardHeader className="px-6 py-4">
+              <CardTitle className="p-2 w-max rounded-sm bg-orange-600">
+                3.0
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col h-full scroll-auto overflow-scroll">
               <GameNav navpath="/">Lockpick</GameNav>
@@ -40,7 +46,7 @@ const Home = () => {
               <GameNav navpath="/">Thermite</GameNav>
               <GameNav navpath="/">VAR</GameNav>
               <GameNav navpath="/">Boosting - Hacking Device</GameNav>
-              <GameNav navpath="/">Casino Code - Number Memory</GameNav>
+              <GameNav navpath="/">Number Memory - Casino</GameNav>
               <GameNav navpath="/">USB</GameNav>
               <GameNav navpath="/">Untangle</GameNav>
               <GameNav navpath="/">DDR</GameNav>
