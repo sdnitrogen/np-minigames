@@ -47,6 +47,16 @@ const SameGame = () => {
       setOpen(true)
       setResult("S U C C E S S !")
     }
+    if (flatBoard.length === row * col) {
+      const solvabilityBoard = getSolvable(board)
+      const remainingSolvableBoxes = solvabilityBoard
+        .flat()
+        .reduce((a, b) => a + b, 0)
+      if (remainingSolvableBoxes === 0) {
+        setOpen(true)
+        setResult("F A I L E D !")
+      }
+    }
   }, [board])
 
   useEffect(() => {
@@ -96,6 +106,31 @@ const SameGame = () => {
     return rotateLeft(
       bottomPadded.filter((row) => !blankRows.includes(row)).concat(blankRows)
     )
+  }
+
+  const getSolvable = (grid: string[][]) => {
+    const visited = [...Array(row)].map((_) => Array(col).fill(false))
+    const sol = [...Array(row)].map((_) => Array(col).fill(0))
+    const dfs = (x: number, y: number) => {
+      if (x < 0 || y < 0 || x > row - 1 || y > col - 1 || visited[x][y]) return
+      const color = grid[x][y]
+      visited[x][y] = true
+      if (color !== "" && x - 1 >= 0 && grid[x - 1][y] === color) sol[x][y] = 1
+      else if (color !== "" && x + 1 < row && grid[x + 1][y] === color)
+        sol[x][y] = 1
+      else if (color !== "" && y - 1 >= 0 && grid[x][y - 1] === color)
+        sol[x][y] = 1
+      else if (color !== "" && y + 1 < col && grid[x][y + 1] === color)
+        sol[x][y] = 1
+
+      dfs(x + 1, y)
+      dfs(x, y - 1)
+      dfs(x - 1, y)
+      dfs(x, y + 1)
+    }
+
+    dfs(0, 0)
+    return sol
   }
 
   const getAdjacentBoxes = (grid: string[][], initX: number, initY: number) => {

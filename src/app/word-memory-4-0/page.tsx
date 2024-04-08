@@ -119,7 +119,7 @@ const WordMemory = () => {
       </AlertDialog>
       <Header title="Word Memory" />
       <Description desc={wordMemoryDescription} />
-      <section className="flex flex-1 flex-col items-center justify-center gap-2 w-full rounded-lg border-2 p-2">
+      <section className="flex flex-1 flex-col items-center justify-center gap-2 w-full p-2">
         <div className="mt-auto">{score} / 25</div>
         {loading && <Skeleton className="rounded-lg w-[32rem] h-[12rem]" />}
         {!loading && (
