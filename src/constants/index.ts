@@ -6,6 +6,8 @@ export const sameGameDescription = `Click on same-colored grouped boxes (vertica
 
 export const thermalFuseDescription = `Figure out which tile can move 1 tile / 2 tiles / 3 tiles. Click on a tile twice to make it disappear.\nClear the board to win.`
 
+export const noidDescription = `Click the correct buttons in order of the given sequence.`
+
 export const wordList = [
   "aardvark",
   "aardvarks",

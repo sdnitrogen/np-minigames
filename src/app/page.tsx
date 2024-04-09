@@ -25,9 +25,12 @@ const Home = () => {
                   Same Game - Roof Running
                 </GameNav>
                 <GameNav navpath="/">Smoke Crack - Typing</GameNav>
-                <GameNav navpath="/">Repair Kit / HandCuff</GameNav>
-                <GameNav navpath="/">BUTC Hack - Fallout</GameNav>
                 <GameNav navpath="/">Vehicle Chop - Typing</GameNav>
+                <GameNav navpath="/">Repair Kit / HandCuff</GameNav>
+                <GameNav navpath="/">Sniff - Crypto Hack</GameNav>
+                <GameNav navpath="/noid-4-0" done>
+                  Noid - Crypto Security
+                </GameNav>
                 <GameNav navpath="/">Heist Pinger</GameNav>
                 <GameNav navpath="/word-memory-4-0" done>
                   Word Memory
@@ -35,7 +38,7 @@ const Home = () => {
                 <GameNav navpath="/thermal-fuse-4-0" done>
                   Thermal Fuse - Maze Bank
                 </GameNav>
-                <GameNav navpath="/">Maze Bank - Terminal</GameNav>
+                <GameNav navpath="/">Terminal - Maze Bank</GameNav>
               </div>
             </ScrollArea>
           </Card>

@@ -43,7 +43,7 @@ const iconBag = [
   ["tree", "wolf", "banana"],
 ]
 
-const SameGame = () => {
+const ThermalFuse = () => {
   const row = 6
   const col = 6
   const fullTime = 45
@@ -323,4 +323,4 @@ const SameGame = () => {
   )
 }
 
-export default SameGame
+export default ThermalFuse
