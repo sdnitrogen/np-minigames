@@ -4,6 +4,8 @@ export const wordMemoryDescription = `Click Seen / Unseen buttons for the englis
 
 export const sameGameDescription = `Click on same-colored grouped boxes (vertically & horizontally) to make them disappear.\nBoxes fall down and left. Clear the board to win.`
 
+export const thermalFuseDescription = `Figure out which tile can move 1 tile / 2 tiles / 3 tiles. Click on a tile twice to make it disappear.\nClear the board to win.`
+
 export const wordList = [
   "aardvark",
   "aardvarks",

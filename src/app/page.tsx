@@ -32,7 +32,9 @@ const Home = () => {
                 <GameNav navpath="/word-memory-4-0" done>
                   Word Memory
                 </GameNav>
-                <GameNav navpath="/">Maze Bank - Thermal Fuse</GameNav>
+                <GameNav navpath="/thermal-fuse-4-0" done>
+                  Thermal Fuse - Maze Bank
+                </GameNav>
                 <GameNav navpath="/">Maze Bank - Terminal</GameNav>
               </div>
             </ScrollArea>
