@@ -256,15 +256,15 @@ const SameGame = () => {
       <section className="flex flex-1 flex-col items-center justify-center gap-4 w-full">
         <div className="flex flex-row items-center justify-between gap-2 w-[30rem] mt-auto px-2">
           <Select
-            defaultValue={targetScore}
-            onValueChange={(val: number) => setTargetScore(val)}>
+            defaultValue={targetScore.toString()}
+            onValueChange={(val: string) => setTargetScore(Number(val))}>
             <Label>Target Score : </Label>
             <SelectTrigger className="w-32 mr-auto">
               <SelectValue placeholder="Select target Score" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={24}>24</SelectItem>
-              <SelectItem value={28}>28</SelectItem>
+              <SelectItem value="24">24</SelectItem>
+              <SelectItem value="28">28</SelectItem>
             </SelectContent>
           </Select>
           {score} / {targetScore}
