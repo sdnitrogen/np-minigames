@@ -7,7 +7,18 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "NoPixel Minigames",
-  description: "NoPixel GTA-V RP server minigames library",
+  description:
+    "NoPixel GTA-V FIVEM RP server minigames library for hacks - 4.0 and 3.0",
+  keywords: [
+    "nopixel",
+    "hacking",
+    "minigame",
+    "gta",
+    "roleplay",
+    "4.0",
+    "3.0",
+    "fivem",
+  ],
 }
 
 export default function RootLayout({
