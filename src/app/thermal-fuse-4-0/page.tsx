@@ -17,7 +17,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Progress } from "@/components/ui/progress"
 import { generateBoard } from "./helper"
 import { ThermalFuseTile } from "@/types/ThermalFuseTile"
-import { Bird, Rabbit, Snail } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -26,13 +25,29 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import {
+  Banana,
+  Bear,
+  Bird,
+  Claw,
+  Frog,
+  Monkey,
+  Rat,
+  Tree,
+  Wolf,
+} from "@/icons"
 
-const iconBag = ["bird", "rabbit", "snail"]
+const iconBag = [
+  ["bird", "frog", "rat"],
+  ["bear", "monkey", "claw"],
+  ["tree", "wolf", "banana"],
+]
 
 const SameGame = () => {
   const row = 6
   const col = 6
   const fullTime = 45
+  const [iconSet, setIconSet] = useState<string[]>(iconBag[0])
   const [open, setOpen] = useState(false)
   const [score, setScore] = useState(0)
   const [result, setResult] = useState("")
@@ -42,6 +57,7 @@ const SameGame = () => {
   const [solvable, setSolvable] = useState(true)
   const [combo, setCombo] = useState(0)
   const [lastIcon, setLastIcon] = useState("")
+  const [lastIcons, setLastIcons] = useState<string[]>([])
   const [comboText, setComboText] = useState("")
   const [targetScore, setTargetScore] = useState(24)
   const [board, setBoard] = useState<ThermalFuseTile[][]>([])
@@ -49,18 +65,26 @@ const SameGame = () => {
   useEffect(() => {
     if (combo === 3) {
       setComboText("CRC BYPASSED!")
+      setScore(score + 2)
       setTimeout(() => {
         setComboText("")
       }, 1000)
     }
     if (combo === 6) {
       setComboText("2X CRC BYPASSED!")
+      setScore(score + 4)
       setTimeout(() => {
         setComboText("")
       }, 1000)
     }
-    //TODO: "triple data link" combo logic
-  }, [combo, setComboText])
+    if (lastIcons.length === 3) {
+      setComboText("TRIPLE DATA LINK!")
+      setScore(score + 3)
+      setTimeout(() => {
+        setComboText("")
+      }, 1000)
+    }
+  }, [combo, lastIcons.length, setComboText])
 
   useEffect(() => {
     if (score === targetScore) {
@@ -104,7 +128,9 @@ const SameGame = () => {
 
   const startGame = () => {
     setSolvable(true)
-    const generatedBoard = generateBoard(row, col, iconBag)
+    const newIconSet = iconBag[Math.floor(Math.random() * 3)]
+    setIconSet(newIconSet)
+    const generatedBoard = generateBoard(row, col, newIconSet)
     setBoard(generatedBoard)
     setLoading(true)
     setResult("Init")
@@ -144,7 +170,7 @@ const SameGame = () => {
         fBoard[x][y].color = fBoard[x][y].color.slice(0, -1) + "3"
       }
 
-      if (fBoard[x][y].icon === iconBag[0]) {
+      if (fBoard[x][y].icon === iconSet[0]) {
         dfs(x + 3, y)
         dfs(x - 3, y)
         dfs(x, y + 3)
@@ -154,7 +180,7 @@ const SameGame = () => {
         dfs(x - 3, y + 3)
         dfs(x - 3, y - 3)
       }
-      if (fBoard[x][y].icon === iconBag[1]) {
+      if (fBoard[x][y].icon === iconSet[1]) {
         dfs(x + 2, y)
         dfs(x - 2, y)
         dfs(x, y + 2)
@@ -164,7 +190,7 @@ const SameGame = () => {
         dfs(x - 2, y + 2)
         dfs(x - 2, y - 2)
       }
-      if (fBoard[x][y].icon === iconBag[2]) {
+      if (fBoard[x][y].icon === iconSet[2]) {
         dfs(x + 1, y)
         dfs(x - 1, y)
         dfs(x, y + 1)
@@ -182,12 +208,16 @@ const SameGame = () => {
       if (fBoard[x][y].clicked === 0) {
         setCombo(0)
         setLastIcon("")
+        setLastIcons([])
         fBoard[x][y].clicked += 1
         fBoard[x][y].color = "b7"
-        fBoard[x][y].icon = iconBag[Math.floor(Math.random() * 3)]
+        fBoard[x][y].icon = iconSet[Math.floor(Math.random() * 3)]
       } else if (fBoard[x][y].clicked === 1) {
         let curCombo = combo
         if (lastIcon === "" || lastIcon !== fBoard[x][y].icon) {
+          lastIcons.includes(fBoard[x][y].icon)
+            ? setLastIcons([fBoard[x][y].icon])
+            : setLastIcons([...lastIcons, fBoard[x][y].icon])
           setLastIcon(fBoard[x][y].icon)
           setCombo(1)
         } else if (lastIcon === fBoard[x][y].icon) {
@@ -197,9 +227,7 @@ const SameGame = () => {
         fBoard[x][y].clicked += 1
         fBoard[x][y].color = ""
         fBoard[x][y].icon = ""
-        if (curCombo === 3) setScore(score + 3)
-        else if (curCombo === 6) setScore(score + 5)
-        else setScore(score + 1)
+        setScore(score + 1)
       }
       setBoard(fBoard)
     },
@@ -260,9 +288,19 @@ const SameGame = () => {
                         tile.clickable
                       } ${result !== "" && "pointer-events-none"}`}
                       onClick={() => handleTileClick(i, j)}>
-                      {tile.icon === "bird" && <Bird className="h-8 w-8" />}
-                      {tile.icon === "rabbit" && <Rabbit className="h-8 w-8" />}
-                      {tile.icon === "snail" && <Snail className="h-8 w-8" />}
+                      {tile.icon === "bird" && <Bird className="h-10 w-10" />}
+                      {tile.icon === "frog" && <Frog className="h-10 w-10" />}
+                      {tile.icon === "rat" && <Rat className="h-10 w-10" />}
+                      {tile.icon === "bear" && <Bear className="h-10 w-10" />}
+                      {tile.icon === "monkey" && (
+                        <Monkey className="h-10 w-10" />
+                      )}
+                      {tile.icon === "claw" && <Claw className="h-10 w-10" />}
+                      {tile.icon === "tree" && <Tree className="h-10 w-10" />}
+                      {tile.icon === "wolf" && <Wolf className="h-10 w-10" />}
+                      {tile.icon === "banana" && (
+                        <Banana className="h-10 w-10" />
+                      )}
                     </div>
                   ))}
                 </div>
