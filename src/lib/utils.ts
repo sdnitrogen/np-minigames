@@ -1,5 +1,6 @@
 import { wordList } from "@/constants"
 import { type ClassValue, clsx } from "clsx"
+import _ from "lodash"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -11,7 +12,7 @@ export const getRandomWord = (list: string[]) => {
 }
 
 export const getRandomWordsList = () => {
-  const resWordList = wordList.sort(() => 0.5 - Math.random()).slice(0, 25)
+  const resWordList = _.shuffle(wordList).slice(0, 25)
   return resWordList
 }
 

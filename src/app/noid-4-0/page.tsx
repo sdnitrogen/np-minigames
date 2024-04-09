@@ -19,17 +19,16 @@ import _ from "lodash"
 const alphanum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 const generateBoard = (row: number, col: number) => {
-  const board = Array(row)
-    .fill(null)
-    .map(() =>
-      Array(col)
-        .fill(null)
-        .map(
-          () =>
-            alphanum.split("")[Math.floor(Math.random() * 36)].toUpperCase() +
-            alphanum.split("")[Math.floor(Math.random() * 36)].toUpperCase()
-        )
+  const track = new Set<string>()
+  while (track.size !== 25) {
+    track.add(
+      alphanum.split("")[Math.floor(Math.random() * 36)] +
+        alphanum.split("")[Math.floor(Math.random() * 36)]
     )
+  }
+  const array = Array.from(track)
+  const board = []
+  while (array.length) board.push(array.splice(0, 5))
   return board
 }
 
@@ -64,10 +63,7 @@ const Noid = () => {
   const startGame = () => {
     const generatedBoard = generateBoard(row, col)
     setBoard(generatedBoard)
-    const targetSeq = generatedBoard
-      .flat()
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 8)
+    const targetSeq = _.shuffle(generatedBoard.flat()).slice(0, 8)
     setSequence(targetSeq)
     setClick(0)
     setMisClicked("")
