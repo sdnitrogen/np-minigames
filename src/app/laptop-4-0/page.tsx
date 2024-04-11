@@ -172,7 +172,7 @@ const Sniff = () => {
             {passwordsBoard.length > 0 && (
               <div className="flex flex-row items-center gap-2 text-sm font-semibold text-yellow-300">
                 <div className="w-2 h-2 rounded-full bg-green-300" />
-                Find the password in the computer's memory :
+                Find the password in the computer&apos;s memory :
               </div>
             )}
             {passwordsBoard.length > 0 && (
