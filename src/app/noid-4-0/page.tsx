@@ -20,7 +20,7 @@ const alphanum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 const generateBoard = (row: number, col: number) => {
   const track = new Set<string>()
-  while (track.size !== 25) {
+  while (track.size !== row * col) {
     track.add(
       alphanum.split("")[Math.floor(Math.random() * 36)] +
         alphanum.split("")[Math.floor(Math.random() * 36)]

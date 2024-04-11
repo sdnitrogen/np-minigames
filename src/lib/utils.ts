@@ -1,4 +1,4 @@
-import { wordList } from "@/constants"
+import { wordList, words7 } from "@/constants"
 import { type ClassValue, clsx } from "clsx"
 import _ from "lodash"
 import { twMerge } from "tailwind-merge"
@@ -14,6 +14,11 @@ export const getRandomWord = (list: string[]) => {
 export const getRandomWordsList = () => {
   const resWordList = _.shuffle(wordList).slice(0, 25)
   return resWordList
+}
+
+export const get7LetterWords = () => {
+  const res7Words = _.shuffle(words7).slice(0, 11)
+  return res7Words
 }
 
 export const rotateLeft = <T>(a: T[][]) =>

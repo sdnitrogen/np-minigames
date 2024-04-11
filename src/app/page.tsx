@@ -27,7 +27,9 @@ const Home = () => {
                 <GameNav navpath="/">Smoke Crack - Typing</GameNav>
                 <GameNav navpath="/">Vehicle Chop - Typing</GameNav>
                 <GameNav navpath="/">Repair Kit / HandCuff</GameNav>
-                <GameNav navpath="/">Sniff - Crypto Hack</GameNav>
+                <GameNav navpath="/sniff-4-0" done>
+                  Sniff - Crypto Hack
+                </GameNav>
                 <GameNav navpath="/noid-4-0" done>
                   Noid - Crypto Security
                 </GameNav>

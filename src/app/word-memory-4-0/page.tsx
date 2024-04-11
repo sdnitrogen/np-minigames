@@ -11,14 +11,22 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { wordMemoryDescription } from "@/constants"
 import { getRandomWord, getRandomWordsList } from "@/lib/utils"
 import { useEffect, useState } from "react"
 
 const WordMemory = () => {
-  const fullTime = 20
+  const [targetTime, setTargetTime] = useState(20)
   const [word, setWord] = useState("")
   const [list, setList] = useState<string[]>([])
   const [tracker, setTracker] = useState<string[]>([])
@@ -30,16 +38,18 @@ const WordMemory = () => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    let interval: any
     if (timeLeft > 0 && result === "") {
       const reducedTime = timeLeft - 0.1
-      setTimeout(() => {
+      interval = setInterval(() => {
         setTimeLeft(reducedTime)
-        setProgress((reducedTime / fullTime) * 100)
+        setProgress((reducedTime / targetTime) * 100)
       }, 100)
     } else if (progress <= 0 && result === "") {
       setOpen(true)
       setResult("F A I L E D !")
     }
+    return () => clearInterval(interval)
   }, [timeLeft])
 
   const startGame = () => {
@@ -53,7 +63,7 @@ const WordMemory = () => {
       const randomWordList = getRandomWordsList()
       setList(randomWordList)
       setWord(getRandomWord(randomWordList))
-      setTimeLeft(fullTime)
+      setTimeLeft(targetTime)
       setProgress(100)
       setLoading(false)
     }, 3000)
@@ -120,7 +130,21 @@ const WordMemory = () => {
       <Header title="Word Memory" />
       <Description desc={wordMemoryDescription} />
       <section className="flex flex-1 flex-col items-center justify-center gap-2 w-full p-2">
-        <div className="mt-auto">{score} / 25</div>
+        <div className="flex flex-row items-center justify-between gap-2 w-[32rem] mt-auto px-2">
+          <Select
+            defaultValue={targetTime.toString()}
+            onValueChange={(val: string) => setTargetTime(Number(val))}>
+            <Label>Time difficulty : </Label>
+            <SelectTrigger className="w-48 mr-auto">
+              <SelectValue placeholder="Select time diffiulty" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="25">Cash Exchange</SelectItem>
+              <SelectItem value="20">Maze Bank</SelectItem>
+            </SelectContent>
+          </Select>
+          {score} / 25
+        </div>
         {loading && <Skeleton className="rounded-lg w-[32rem] h-[12rem]" />}
         {!loading && (
           <div className="flex flex-col items-center justify-center bg-muted rounded-lg w-[32rem] h-[12rem] text-primary text-5xl font-bold">

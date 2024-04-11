@@ -14,6 +14,7 @@ Open-Source Project -> Help in building other games appreciated.
 - [x] Same Game (4.0)
 - [x] Thermal Fuse (4.0)
 - [x] Noid (4.0)
+- [x] Sniff (4.0)
 
 ### Technologies
 
