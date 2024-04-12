@@ -14,7 +14,7 @@ export const sniffDescription = `Find the words from the generated text blob. On
 
 export const laptopTerminalDescription = `Memorize the sequence colors and the shapes in each sequence.\n Enter the correct answers to each question prompt within time.`
 
-export const fingerprintScannerDescription = `Guess the 4 digit code.\n Correct place = Green, Wrong place = Yellow, Absent = Red.`
+export const fingerprintScannerDescription = `Guess the 4 digit Pin to crack it - wordle style.\n Correct place = Green, Wrong place = Yellow, No place = Red.`
 
 export const wordList = [
   "aardvark",
