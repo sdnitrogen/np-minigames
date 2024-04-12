@@ -15,6 +15,7 @@ Open-Source Project -> Help in building other games appreciated.
 - [x] Thermal Fuse (4.0)
 - [x] Noid (4.0)
 - [x] Sniff (4.0)
+- [x] Laptop - Terminal (4.0)
 
 ### Technologies
 

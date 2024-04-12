@@ -11,13 +11,12 @@ import {
 } from "@/components/ui/alert-dialog"
 import Header from "@/components/Header"
 import Description from "@/components/Description"
-import { gib, sniffDescription } from "@/constants"
+import { laptopTerminalDescription } from "@/constants"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import _ from "lodash"
 import { Input } from "@/components/ui/input"
-import { ChevronRight } from "lucide-react"
-import { get7LetterWords } from "@/lib/utils"
+import { ChevronRight, Circle, Square, Triangle } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -26,70 +25,143 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { Laptop4Sequence } from "@/types/Laptop4Sequence"
+import { Progress } from "@/components/ui/progress"
 
-const genRanHex = (size: number) =>
-  [...Array(size)]
-    .map(() => Math.floor(Math.random() * 16).toString(16))
-    .join("")
+/*
+Easy : 4 seq -> 2 shapes each (same color per seq) -> 3 questions -> prep = 12, answer = 12
+Hard: 4 seq -> 3 shapes each (same color per seq) -> 4 question -> prep = 6, answer = 9
 
-const generatePasswordsBoard = (wordList: string[]) => {
-  const nums = new Set()
-  while (nums.size !== 11) {
-    nums.add(Math.floor(Math.random() * 32) + 1)
-  }
+Shapes : Square, circle, triangle
+Colors : red, blue, yellow, purple, orange, green
 
-  const array: string[] = []
-  while (array.length < 32) {
-    if (nums.has(array.length)) {
-      const idx = Math.floor(Math.random() * (gib.length - 7))
-      nums.delete(array.length)
-      const word = [
-        ..._.shuffle(gib).slice(0, idx),
-        wordList[nums.size],
-        ..._.shuffle(gib).slice(idx + 7),
-      ].join("")
-      array.push(word)
-    } else {
-      array.push(_.shuffle(gib).join(""))
+Questions:
+seq x shape x
+seq x color
+seq x # of unique shapes
+*/
+
+const colorOptions = ["red", "blue", "yellow", "purple", "orange", "green"]
+const shapeOptions = ["square", "circle", "triangle"]
+
+const generateAnswerOptions = (row: number, col: number) => {
+  const answerOptions = []
+  for (let i = 0; i < row; i++) {
+    for (let j = 0; j < col; j++) {
+      answerOptions.push([i.toString(), j.toString()])
     }
+    answerOptions.push([i.toString(), "color"])
+    answerOptions.push([i.toString(), "#"])
+  }
+  return answerOptions
+}
+
+const generateShapesBoard = (row: number, col: number): Laptop4Sequence[] => {
+  const array: string[] = []
+  while (array.length < row * col) {
+    array.push(shapeOptions[Math.floor(Math.random() * shapeOptions.length)])
   }
 
-  const board = []
-  while (array.length) board.push(array.splice(0, 2))
+  const board: Laptop4Sequence[] = []
+  while (array.length)
+    board.push({
+      color: colorOptions[Math.floor(Math.random() * colorOptions.length)],
+      shapes: array.splice(0, col),
+    })
   return board
 }
 
-const Sniff = () => {
-  const entriesEndRef = useRef<HTMLDivElement | null>(null)
+const generateQuestionSet = (
+  board: Laptop4Sequence[],
+  quesOptions: string[][]
+) => {
+  const questionSet: { q: string; a: string }[] = []
+  quesOptions.forEach((option) => {
+    if (option[1] === "color") {
+      questionSet.push({
+        q: `Sequence ${Number(option[0]) + 1} Color`,
+        a: `${board[Number(option[0])].color}`,
+      })
+    } else if (option[1] === "#") {
+      questionSet.push({
+        q: `Sequence ${Number(option[0]) + 1} # of unique shapes`,
+        a: `${_.uniq(board[Number(option[0])].shapes).length}`,
+      })
+    } else {
+      questionSet.push({
+        q: `Sequence ${Number(option[0]) + 1} Shape ${Number(option[1]) + 1}`,
+        a: `${board[Number(option[0])].shapes[Number(option[1])]}`,
+      })
+    }
+  })
+  return questionSet
+}
+
+const compareAnswers = (
+  c1: { q: string; a: string }[],
+  c2: { q: string; a: string }[]
+) => {
+  let res = true
+  c2.forEach((c, i) => {
+    if (c.a !== c1[i].a) res = false
+  })
+  return res
+}
+
+const LaptopTerminal = () => {
+  const row = 4
+  const [column, setColumn] = useState(2)
+  const fullTime: Record<string, number> = {
+    "2": 24,
+    "3": 15,
+  }
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [open, setOpen] = useState(false)
   const [result, setResult] = useState("")
   const [loading, setLoading] = useState(false)
-  const [password, setPassword] = useState<string>("")
-  const [passwordInput, setPasswordInput] = useState<string>("")
-  const [passwordsBoard, setPasswordsBoard] = useState<string[][]>([])
-  const [tier, setTier] = useState<number>(0)
-  const [tries, setTries] = useState<number>(7)
-  const [entries, setEntries] = useState<number[][]>([])
-
-  const scrollToBottom = () => {
-    entriesEndRef.current?.scrollIntoView({
-      block: "nearest",
-      behavior: "smooth",
-    })
-  }
+  const [progress, setProgress] = useState(100)
+  const [timeLeft, setTimeLeft] = useState(0)
+  const [answerInput, setAnswerInput] = useState<string>("")
+  const [shapesBoard, setShapesBoard] = useState<Laptop4Sequence[]>([])
+  const [questionSet, setQuestionSet] = useState<{ q: string; a: string }[]>([])
+  const [entries, setEntries] = useState<{ q: string; a: string }[]>([])
+  const [prepmode, setPrepmode] = useState(true)
 
   useEffect(() => {
-    scrollToBottom()
-  }, [entries])
+    if (timeLeft > 0 && result === "") {
+      const reducedTime = timeLeft - 0.1
+      setTimeout(() => {
+        setTimeLeft(reducedTime)
+        setProgress((reducedTime / fullTime[column.toString()]) * 100)
+      }, 100)
+      if (column === 2 && timeLeft < 12) {
+        setPrepmode(false)
+      } else if (column === 3 && timeLeft < 9) {
+        setPrepmode(false)
+      }
+    } else if (progress <= 0 && result === "") {
+      setOpen(true)
+      setResult("F A I L E D !")
+    }
+  }, [timeLeft])
+
+  useEffect(() => {
+    if (!prepmode) {
+      setEntries([{ q: questionSet[0].q, a: "" }])
+      inputRef.current?.focus()
+    }
+  }, [prepmode])
 
   const startGame = () => {
-    const wordList = get7LetterWords()
-    setPassword(_.shuffle(wordList)[0].toUpperCase())
-    const generatedPasswordsBoard = generatePasswordsBoard(wordList)
-    setPasswordsBoard(generatedPasswordsBoard)
-    setTries(7 - tier)
+    const generatedShapesBoard = generateShapesBoard(row, column)
+    setShapesBoard(generatedShapesBoard)
+    const generatedAnswerOptions = _.shuffle(
+      generateAnswerOptions(row, column)
+    ).slice(0, column + 1)
+    setQuestionSet(
+      generateQuestionSet(generatedShapesBoard, generatedAnswerOptions)
+    )
+    setPrepmode(true)
     setEntries([])
     setLoading(true)
     setResult("Init")
@@ -97,34 +169,37 @@ const Sniff = () => {
       setResult("")
       setOpen(false)
       setLoading(false)
-      inputRef.current?.focus()
+      setTimeLeft(fullTime[column.toString()])
     }, 3000)
   }
 
   const checkKeyInput = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") submitPassword()
+    if (e.key === "Enter") submitAnswer()
   }
 
-  const submitPassword = () => {
-    if (result !== "") return
-    if (passwordInput === password) {
-      const left = tries - entries.length
-      setEntries([...entries, [7, left]])
-      setPasswordInput("")
+  const submitAnswer = () => {
+    if (result !== "" || prepmode) return
+    let lastQ = entries[entries.length - 1]
+    lastQ.a = answerInput
+    const curEntries = [...entries]
+    curEntries.splice(curEntries.length - 1, 1, lastQ)
+    const comp = compareAnswers(questionSet, curEntries)
+    if (comp && curEntries.length === questionSet.length) {
       setOpen(true)
       setResult("S U C C E S S !")
+      setEntries(curEntries)
+      setAnswerInput("")
+    } else if (!comp) {
+      setOpen(true)
+      setResult("F A I L E D !")
+      setEntries(curEntries)
+      setAnswerInput("")
     } else {
-      if (entries.length === tries - 1) {
-        setOpen(true)
-        setResult("F A I L E D !")
-      }
-      let count = 0
-      for (let i = 0; i < 7; i++) {
-        password[i] === passwordInput[i] && count++
-      }
-      const left = tries - entries.length
-      setEntries([...entries, [count, left]])
-      setPasswordInput("")
+      setEntries([
+        ...curEntries,
+        { q: questionSet[curEntries.length].q, a: "" },
+      ])
+      setAnswerInput("")
     }
   }
 
@@ -145,108 +220,93 @@ const Sniff = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Header title="Sniff - Crypto Hack" />
-      <Description desc={sniffDescription} />
+      <Header title="Laptop - Maze Bank Terminal Hack" />
+      <Description desc={laptopTerminalDescription} />
       <section className="flex flex-1 flex-col items-center w-full p-2">
         <div className="flex flex-row items-center justify-between gap-2 w-[48rem] mt-auto px-2">
           <Select
-            defaultValue={tier.toString()}
-            onValueChange={(val: string) => setTier(Number(val))}>
-            <Label>Protection Tier : </Label>
+            defaultValue={column.toString()}
+            onValueChange={(val: string) => setColumn(Number(val))}>
+            <Label>Difficulty : </Label>
             <SelectTrigger className="w-24 mr-auto">
-              <SelectValue placeholder="Select time diffiulty" />
+              <SelectValue placeholder="Select diffiulty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="0">0</SelectItem>
-              <SelectItem value="1">1</SelectItem>
-              <SelectItem value="2">2</SelectItem>
-              <SelectItem value="3">3</SelectItem>
-              <SelectItem value="4">4</SelectItem>
-              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="2">Easy</SelectItem>
+              <SelectItem value="3">Hard</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        {loading && <Skeleton className="w-[48rem] h-[32rem]" />}
+        {loading && <Skeleton className="w-[48rem] h-[36rem]" />}
         {!loading && (
-          <ScrollArea className="flex flex-col items-start border-2 border-muted w-[48rem] h-[32rem] p-4">
-            {passwordsBoard.length > 0 && (
-              <div className="flex flex-row items-center gap-2 text-sm font-semibold text-yellow-300">
-                <div className="w-2 h-2 rounded-full bg-green-300" />
-                Find the password in the computer&apos;s memory :
-              </div>
-            )}
-            {passwordsBoard.length > 0 && (
-              <div className="flex flex-row items-center gap-2 text-sm font-semibold text-yellow-300">
-                <div className="w-2 h-2 rounded-full bg-green-300" />
-                <span>Protection tier : </span>
-                <span className="text-green-500">{tier}</span>
-              </div>
-            )}
-            {passwordsBoard.length > 0 && (
-              <div className="flex flex-row items-center gap-2 text-sm font-semibold text-yellow-300">
-                <div className="w-2 h-2 rounded-full bg-green-300" />
-                <span>Tries remaining : </span>
-                <span className="text-green-500">{tries}</span>
-              </div>
-            )}
-            {passwordsBoard.map((row, i) => (
-              <div
-                key={`row-${i}`}
-                className="flex flex-row items-center gap-4 text-sm font-semibold">
-                <div className="w-2 h-2 rounded-full bg-green-300" />
-                {row.map((col, j) => (
-                  <div
-                    key={`cell-${i}-${j}`}
-                    className={`flex flex-row gap-4 w-max items-center justify-center`}>
-                    <span className="w-16 text-red-500 text-justify">{`0x${genRanHex(
-                      4
-                    )}`}</span>
-                    <span
-                      className={`${
-                        i === 11 && j === 1 && "text-red-500"
-                      } uppercase w-60 text-justify`}>
-                      {col}
-                    </span>
+          <div className="flex flex-col items-start border-2 border-muted w-[48rem] h-[36rem]">
+            {prepmode &&
+              shapesBoard.map((row, i) => (
+                <div
+                  key={`row-${i}`}
+                  className="flex flex-col items-start justify-center gap-2 text-sm font-bold mb-2 px-4 py-1">
+                  <span className="text-teal-400">{`SEQUENCE  ${i + 1}`}</span>
+                  <div className="flex flex-row items-center gap-8">
+                    {row.shapes.map((col, j) => (
+                      <div
+                        key={`cell-${i}-${j}`}
+                        className={`flex w-24 h-24 items-center justify-center`}>
+                        {col === "square" && (
+                          <Square height={96} width={96} color={row.color} />
+                        )}
+                        {col === "circle" && (
+                          <Circle height={96} width={96} color={row.color} />
+                        )}
+                        {col === "triangle" && (
+                          <Triangle height={96} width={96} color={row.color} />
+                        )}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ))}
-            {entries.map((entry, i) => (
-              <div key={i}>
-                <div className="flex flex-row items-center gap-4 text-sm font-semibold">
-                  <div className="w-2 h-2 rounded-full bg-green-300" />
-                  <span>{`${
-                    entry[0] === 7 ? "Access Granted" : "Access Denied"
-                  } (${entry[0]}/7)`}</span>
                 </div>
-                <div className="flex flex-row items-center gap-4 text-sm font-semibold">
-                  <div className="w-2 h-2 rounded-full bg-green-300" />
-                  <span>{`${
-                    entry[0] === 7
-                      ? "Hacking..."
-                      : `${entry[1] - 1} tries remaining`
-                  }`}</span>
+              ))}
+            {!prepmode &&
+              entries.map((entry, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col gap-2 fon-semibold text-lg p-4">
+                  <div className="text-teal-400">{entry.q}</div>
+                  <div>{entry.a}</div>
                 </div>
+              ))}
+            {!prepmode && result !== "" && (
+              <div
+                className={`${
+                  result === "F A I L E D !" ? "text-red-500" : "text-green-500"
+                } font-semibold text-lg p-4`}>
+                {result === "F A I L E D !"
+                  ? `Failed! Expected Answer : ${
+                      questionSet[entries.length - 1].a
+                    }`
+                  : "Success"}
               </div>
-            ))}
-            <div ref={entriesEndRef} />
-          </ScrollArea>
+            )}
+            <Progress
+              value={progress}
+              className="w-full mt-auto border rounded-none"
+            />
+          </div>
         )}
         <div className="flex w-[48rem] h-8 flex-row items-start space-x-2">
           <Input
             type="text"
-            placeholder="Type  Password  here"
-            value={passwordInput}
-            onChange={(e) => setPasswordInput(e.target.value.toUpperCase())}
+            placeholder="Type  answer  here"
+            value={answerInput}
+            onChange={(e) => setAnswerInput(e.target.value.toLowerCase())}
             onKeyUp={(e) => checkKeyInput(e)}
-            className="flex-1 rounded-none border-muted-foreground uppercase"
+            className="flex-1 rounded-none border-muted-foreground"
             ref={inputRef}
           />
           <Button
             variant="outline"
             size="icon"
             className="rounded-none border-muted-foreground hover:text-secondary hover:bg-primary"
-            onClick={submitPassword}>
+            onClick={submitAnswer}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -258,4 +318,4 @@ const Sniff = () => {
   )
 }
 
-export default Sniff
+export default LaptopTerminal

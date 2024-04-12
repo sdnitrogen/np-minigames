@@ -12,6 +12,8 @@ export const noidDescription = `Click the correct buttons in order of the given 
 
 export const sniffDescription = `Find the words from the generated text blob. One of the words is the password.\n For every wrong guess you'll see how many matching letters are at the correct position.\nGuess the correct password to complete the hack.`
 
+export const laptopTerminalDescription = `Memorize the sequence colors and the shapes in each sequence.\n Enter the correct answers to each question prompt within time.`
+
 export const wordList = [
   "aardvark",
   "aardvarks",

@@ -86,7 +86,6 @@ const Sniff = () => {
 
   const startGame = () => {
     const wordList = get7LetterWords()
-    setPassword(_.shuffle(wordList)[0].toUpperCase())
     const generatedPasswordsBoard = generatePasswordsBoard(wordList)
     setPasswordsBoard(generatedPasswordsBoard)
     setTries(7 - tier)
@@ -94,6 +93,7 @@ const Sniff = () => {
     setLoading(true)
     setResult("Init")
     setTimeout(() => {
+      setPassword(_.shuffle(wordList)[0].toUpperCase())
       setResult("")
       setOpen(false)
       setLoading(false)
@@ -106,7 +106,7 @@ const Sniff = () => {
   }
 
   const submitPassword = () => {
-    if (result !== "") return
+    if (result !== "" || password === "") return
     if (passwordInput === password) {
       const left = tries - entries.length
       setEntries([...entries, [7, left]])

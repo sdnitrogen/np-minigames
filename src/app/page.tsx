@@ -40,7 +40,10 @@ const Home = () => {
                 <GameNav navpath="/thermal-fuse-4-0" done>
                   Thermal Fuse - Maze Bank
                 </GameNav>
-                <GameNav navpath="/">Laptop - Maze Bank Terminal</GameNav>
+                <GameNav navpath="/laptop-4-0" done>
+                  Laptop - Maze Bank Terminal
+                </GameNav>
+                <GameNav navpath="/">Fingerprint Scanner Hack</GameNav>
               </div>
             </ScrollArea>
           </Card>
