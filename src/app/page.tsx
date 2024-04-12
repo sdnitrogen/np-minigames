@@ -43,7 +43,9 @@ const Home = () => {
                 <GameNav navpath="/laptop-4-0" done>
                   Laptop - Maze Bank Terminal
                 </GameNav>
-                <GameNav navpath="/">Fingerprint Scanner Hack</GameNav>
+                <GameNav navpath="/pincracker-4-0" done>
+                  PinCracker - Fingerprint Scanner
+                </GameNav>
               </div>
             </ScrollArea>
           </Card>

@@ -16,6 +16,7 @@ Open-Source Project -> Help in building other games appreciated.
 - [x] Noid (4.0)
 - [x] Sniff (4.0)
 - [x] Laptop - Terminal (4.0)
+- [x] Fingerprint Scanner - PinCracker (4.0)
 
 ### Technologies
 
