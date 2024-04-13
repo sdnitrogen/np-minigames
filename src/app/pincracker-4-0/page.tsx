@@ -16,21 +16,30 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
+import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { fingerprintScannerDescription } from "@/constants"
 import { REGEXP_ONLY_DIGITS } from "input-otp"
 import _ from "lodash"
 import { KeyboardEvent, useEffect, useState } from "react"
 
-const generateCode = () => {
+const generateCode = (time: number) => {
   const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-  const code = _.shuffle(nums).slice(0, 4)
+  const code =
+    time === 30 ? _.shuffle(nums).slice(0, 3) : _.shuffle(nums).slice(0, 4)
   return code
 }
 
 const PinCracker = () => {
-  const [targetTime, setTargetTime] = useState(15)
+  const [targetTime, setTargetTime] = useState(30)
   const [code, setCode] = useState<string[]>([])
   const [number, setNumber] = useState<string>("")
   const [tracker, setTracker] = useState<string[]>([])
@@ -62,7 +71,7 @@ const PinCracker = () => {
     setTimeout(() => {
       setResult("")
       setOpen(false)
-      const genCode = generateCode()
+      const genCode = generateCode(targetTime)
       setCode(genCode)
       setNumber("")
       setTimeLeft(targetTime)
@@ -76,7 +85,11 @@ const PinCracker = () => {
   }
 
   const handleSubmit = () => {
-    if (number.length < 4) return
+    if (
+      (targetTime === 15 && number.length < 4) ||
+      (targetTime === 30 && number.length < 3)
+    )
+      return
     if (number === code.join("")) {
       setTracker(["g", "g", "g", "g"])
       setOpen(true)
@@ -110,9 +123,23 @@ const PinCracker = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Header title="PinCracker - Fingerprint Scanner" />
+      <Header title="PinCracker" />
       <Description desc={fingerprintScannerDescription} />
       <section className="flex flex-1 flex-col items-center justify-center gap-2 w-full p-2">
+        <div className="flex flex-row items-center justify-between gap-2 w-[32rem] mt-auto px-2">
+          <Select
+            defaultValue={targetTime.toString()}
+            onValueChange={(val: string) => setTargetTime(Number(val))}>
+            <Label>Time difficulty : </Label>
+            <SelectTrigger className="w-48 mr-auto">
+              <SelectValue placeholder="Select time diffiulty" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="30">RFID Scan</SelectItem>
+              <SelectItem value="20">Vault Door</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         {loading && (
           <Skeleton className="rounded-lg w-[32rem] h-[12rem] mt-auto" />
         )}
@@ -129,15 +156,15 @@ const PinCracker = () => {
                 <InputOTPSlot
                   index={0}
                   className={`h-24 w-24 border-muted-foreground text-6xl ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[0] === "g" &&
                     "border-b-4 border-b-green-500"
                   } ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[0] === "y" &&
                     "border-b-4 border-b-yellow-500"
                   } ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[0] === "r" &&
                     "border-b-4 border-b-red-500"
                   }`}
@@ -145,15 +172,15 @@ const PinCracker = () => {
                 <InputOTPSlot
                   index={1}
                   className={`h-24 w-24 border-muted-foreground text-6xl ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[1] === "g" &&
                     "border-b-4 border-b-green-500"
                   } ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[1] === "y" &&
                     "border-b-4 border-b-yellow-500"
                   } ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[1] === "r" &&
                     "border-b-4 border-b-red-500"
                   }`}
@@ -161,35 +188,37 @@ const PinCracker = () => {
                 <InputOTPSlot
                   index={2}
                   className={`h-24 w-24 border-muted-foreground text-6xl ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[2] === "g" &&
                     "border-b-4 border-b-green-500"
                   } ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[2] === "y" &&
                     "border-b-4 border-b-yellow-500"
                   } ${
-                    tracker.length === 4 &&
+                    tracker.length > 0 &&
                     tracker[2] === "r" &&
                     "border-b-4 border-b-red-500"
                   }`}
                 />
-                <InputOTPSlot
-                  index={3}
-                  className={`h-24 w-24 border-muted-foreground text-6xl ${
-                    tracker.length === 4 &&
-                    tracker[3] === "g" &&
-                    "border-b-4 border-b-green-500"
-                  } ${
-                    tracker.length === 4 &&
-                    tracker[3] === "y" &&
-                    "border-b-4 border-b-yellow-500"
-                  } ${
-                    tracker.length === 4 &&
-                    tracker[3] === "r" &&
-                    "border-b-4 border-b-red-500"
-                  }`}
-                />
+                {targetTime === 20 && (
+                  <InputOTPSlot
+                    index={3}
+                    className={`h-24 w-24 border-muted-foreground text-6xl ${
+                      tracker.length > 0 &&
+                      tracker[3] === "g" &&
+                      "border-b-4 border-b-green-500"
+                    } ${
+                      tracker.length > 0 &&
+                      tracker[3] === "y" &&
+                      "border-b-4 border-b-yellow-500"
+                    } ${
+                      tracker.length > 0 &&
+                      tracker[3] === "r" &&
+                      "border-b-4 border-b-red-500"
+                    }`}
+                  />
+                )}
               </InputOTPGroup>
             </InputOTP>
             <Progress value={progress} className="w-full rounded-none" />

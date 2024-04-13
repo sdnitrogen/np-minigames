@@ -44,7 +44,7 @@ const Home = () => {
                   Laptop - Maze Bank Terminal
                 </GameNav>
                 <GameNav navpath="/pincracker-4-0" done>
-                  PinCracker - Maze Bank Vault
+                  PinCracker - Maze Bank
                 </GameNav>
               </div>
             </ScrollArea>
